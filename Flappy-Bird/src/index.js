@@ -30,10 +30,15 @@ function preload () {
 }
 
 const VELOCITY = 200
+const initialBirdPosition = {
+  x: config.width / 10,
+  y: config.height/ 2
+}
 
 let bird = null
 let flapVelocity = 150
 let totalDelta = null
+
 
 // initialization 
 function create () {
@@ -44,7 +49,7 @@ function create () {
   // this.add.image(config.width / 2, config.height / 2, 'sky'); // or
   this.add.image(0, 0, 'sky').setOrigin(0,0);
 
-  bird = this.physics.add.sprite(config.width / 10, config.height / 2, 'bird');
+  bird = this.physics.add.sprite(initialBirdPosition.x, initialBirdPosition.y, 'bird');
   // bird.body.velocity.y = 200 // 200pixels per seconds, the same as bird.body.gravity.y = 200
   
   this.input.on('pointerdown', flap)
@@ -53,19 +58,18 @@ function create () {
 
 // default 60fps (times per second) = 60 * 16,3ms = 1000ms 
 function update(time, delta){
-  // console.log(time, delta)
-  // console.log(bird.body.velocity.y, bird.body.gravity.y)
 
-  // coallision left and right
-  // if bird position x is same or larger than width of canvas go back to the left
-  // if bird position x is smaller or equal to 0 go back to the right
-  // if (bird.x >= config.width - bird.width / 2) {
-  //   bird.body.velocity.x = -VELOCITY
-  // } else if (bird.x <= 0 + bird.width / 2) {
-  //   bird.body.velocity.x = VELOCITY
-  // }
+  // coallision top and bottom
+  if (bird.y >= config.height - bird.height / 2 || bird.y <= 0 + bird.height / 2) {
+    restartBirdPosition()
+  } 
 }
 
 function flap(){
   bird.body.velocity.y = -flapVelocity
+}
+
+function restartBirdPosition(){
+  bird.x = initialBirdPosition.x
+  bird.y = initialBirdPosition.y
 }
