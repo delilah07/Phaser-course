@@ -28,10 +28,10 @@ const PIPES_TO_RENDER =  4
 let bird = null
 let flapVelocity = 150
 
-let upperPipe = null
-let lowerPipe = null
+let pipes = null
+
 let pipeVerticalDistanceRange = [150, 250]
-let pipeHorizontalDistance = 400
+let pipeHorizontalDistanceRange = [400,600]
 
 let totalDelta = null
 
@@ -58,18 +58,18 @@ function create () {
 
   bird = this.physics.add.sprite(initialBirdPosition.x, initialBirdPosition.y, 'bird');
   bird.body.gravity.y = 400
+  
+  pipes = this.physics.add.group();
 
   for (let i = 0; i < PIPES_TO_RENDER; i++) {
-    const pipeVerticalDistance = Phaser.Math.Between(...pipeVerticalDistanceRange)
-    const pipeVerticalPosition = Phaser.Math.Between(20, config.height - 20 - pipeVerticalDistance)
+    const upperPipe = pipes.create(0, 0, 'pipe').setOrigin(0, 1);
+    const lowerPipe = pipes.create(0, 0, 'pipe').setOrigin(0, 0);
 
-    upperPipe = this.physics.add.sprite(400 + (i * pipeHorizontalDistance), pipeVerticalPosition, 'pipe').setOrigin(0, 1);
-    lowerPipe = this.physics.add.sprite(upperPipe.x, upperPipe.y + pipeVerticalDistance, 'pipe').setOrigin(0, 0);
-    
-    upperPipe.body.velocity.x = -200
-    lowerPipe.body.velocity.x = -200
+    placePipe(upperPipe, lowerPipe)
   }
-  
+
+  pipes.setVelocityX(-200)
+
   this.input.on('pointerdown', flap)
   this.input.keyboard.on('keydown-SPACE', flap)
 }
@@ -81,6 +81,8 @@ function update(time, delta){
   if (bird.y >= config.height - bird.height / 2 || bird.y <= 0 + bird.height / 2) {
     restartBirdPosition()
   } 
+
+  recyclePipe()
 }
 
 function flap(){
@@ -90,4 +92,44 @@ function flap(){
 function restartBirdPosition(){
   bird.x = initialBirdPosition.x
   bird.y = initialBirdPosition.y
+}
+
+function placePipe(uPipe, lPipe, i){
+  const rightMostX = getRightMostPipe()
+  const pipeVerticalDistance = Phaser.Math.Between(...pipeVerticalDistanceRange)
+  const pipeVerticalPosition = Phaser.Math.Between(20, config.height - 20 - pipeVerticalDistance)
+
+  const pipeHorizontalDistance = Phaser.Math.Between(...pipeHorizontalDistanceRange)
+
+  uPipe.x = rightMostX + pipeHorizontalDistance
+  console.log(uPipe.x)
+  uPipe.y = pipeVerticalPosition
+  
+  lPipe.x = uPipe.x
+  lPipe.y = uPipe.y + pipeVerticalDistance
+
+}
+
+function recyclePipe(){
+  let tempPipes = []
+  pipes.getChildren().forEach(pipe => {
+    if (pipe.getBounds().right <= 0) {
+      // recycle pipe
+      tempPipes.push(pipe)
+      if (tempPipes.length === 2){
+        placePipe(...tempPipes)
+      }
+      // add new pipes
+    }
+  })
+}
+
+function getRightMostPipe(){
+  let rightMostX = 0;
+
+  pipes.getChildren().forEach(pipe => {
+    rightMostX = Math.max(pipe.x, rightMostX)
+  });
+
+  return rightMostX
 }
