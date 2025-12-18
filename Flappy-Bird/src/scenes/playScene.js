@@ -27,6 +27,7 @@ class PlayScene extends Phaser.Scene{
         this.createBG();
         this.createBird();
         this.createPipes();
+        this.createColliders();
         this.handleInputs();
     }
     update() {
@@ -38,14 +39,21 @@ class PlayScene extends Phaser.Scene{
     }
     createBird() {
         this.bird = this.physics.add.sprite(this.config.startPosition.x, this.config.startPosition.y, 'bird');
-        this.bird.body.gravity.y = 400
+        this.bird.body.gravity.y = 400;
+        this.bird.setCollideWorldBounds(true)
     }
     createPipes() {
         this.pipes = this.physics.add.group();
 
         for (let i = 0; i < PIPES_TO_RENDER; i++) {
-            const upperPipe = this.pipes.create(0, 0, 'pipe').setOrigin(0, 1);
-            const lowerPipe = this.pipes.create(0, 0, 'pipe').setOrigin(0, 0);
+            const upperPipe = this.pipes
+                .create(0, 0, 'pipe')
+                .setImmovable(true)
+                .setOrigin(0, 1);
+            const lowerPipe = this.pipes
+                .create(0, 0, 'pipe')
+                .setImmovable(true)
+                .setOrigin(0, 0);
 
             this.placePipe(upperPipe, lowerPipe)
         }
@@ -59,20 +67,21 @@ class PlayScene extends Phaser.Scene{
 
     checkGameStatus() {
         if (this.bird.y >= this.config.height - this.bird.height / 2 || this.bird.y <= 0 + this.bird.height / 2) {
-            this.restartBirdPosition()
+            this.gameOver()
         } 
-
-        this.recyclePipe()
     }
 
     flap(){
         this.bird.body.velocity.y = -this.flapVelocity
     }
 
-    restartBirdPosition(){
-        this.bird.x = this.config.startPosition.x
-        this.bird.y = this.config.startPosition.y
-        this.bird.body.velocity.y = 0;
+    gameOver(){
+        // this.bird.x = this.config.startPosition.x
+        // this.bird.y = this.config.startPosition.y
+        // this.bird.body.velocity.y = 0;
+
+        this.physics.pause();
+        this.bird.setTint(0xff0000)
     } 
 
     placePipe(uPipe, lPipe){
@@ -83,12 +92,10 @@ class PlayScene extends Phaser.Scene{
         const pipeHorizontalDistance = Phaser.Math.Between(...this.pipeHorizontalDistanceRange)
 
         uPipe.x = rightMostX + pipeHorizontalDistance
-        console.log(uPipe.x)
         uPipe.y = pipeVerticalPosition
         
         lPipe.x = uPipe.x
         lPipe.y = uPipe.y + pipeVerticalDistance
-
     }
 
     recyclePipe(){
@@ -109,6 +116,10 @@ class PlayScene extends Phaser.Scene{
         this.pipes.getChildren().forEach(pipe => rightMostX = Math.max(pipe.x, rightMostX));
 
         return rightMostX
+    }
+
+    createColliders(){
+        this.physics.add.collider(this.bird, this.pipes, this.gameOver, null, this)
     }
 }
 
