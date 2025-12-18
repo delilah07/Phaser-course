@@ -82,6 +82,14 @@ class PlayScene extends Phaser.Scene{
 
         this.physics.pause();
         this.bird.setTint(0xff0000)
+
+        this.time.addEvent({
+            delay: 1000,
+            callback: () => {
+                this.scene.restart()
+            },
+            loop: false
+        })
     } 
 
     placePipe(uPipe, lPipe){
