@@ -15,6 +15,11 @@ class PlayScene extends Phaser.Scene{
         this.pipeVerticalDistanceRange = [150, 250]
         this.pipeHorizontalDistanceRange = [400,600]
         this.flapVelocity = 150
+
+        this.score = 0
+        this.scoreText = ''
+        this.bestScore = localStorage.getItem('bestScore') || 0
+        this.bestScoreText = ''
     }
 
     preload(){
@@ -29,6 +34,8 @@ class PlayScene extends Phaser.Scene{
         this.createPipes();
         this.createColliders();
         this.handleInputs();
+
+        this.createScore()
     }
     update() {
         this.checkGameStatus();
@@ -76,17 +83,23 @@ class PlayScene extends Phaser.Scene{
     }
 
     gameOver(){
-        // this.bird.x = this.config.startPosition.x
-        // this.bird.y = this.config.startPosition.y
-        // this.bird.body.velocity.y = 0;
 
         this.physics.pause();
         this.bird.setTint(0xff0000)
+
+        const bestScoreValue = localStorage.getItem('bestScore')
+        const bestScore = bestScoreValue && parseInt(bestScoreValue, 10)
+
+        if (!bestScore || this.score > bestScore){
+            localStorage.setItem('bestScore', this.score)
+        }
 
         this.time.addEvent({
             delay: 1000,
             callback: () => {
                 this.scene.restart()
+                this.score = 0
+                this.bestScore = localStorage.getItem('bestScore')
             },
             loop: false
         })
@@ -112,7 +125,8 @@ class PlayScene extends Phaser.Scene{
             if (pipe.getBounds().right <= 0) {
                 tempPipes.push(pipe)
                 if (tempPipes.length === 2){
-                    this.placePipe(...tempPipes)
+                    this.placePipe(...tempPipes);
+                    this.increaseScore()
                 }
             }
         })
@@ -128,6 +142,17 @@ class PlayScene extends Phaser.Scene{
 
     createColliders(){
         this.physics.add.collider(this.bird, this.pipes, this.gameOver, null, this)
+    }
+
+    createScore(){
+        this.scoreText = this.add.text(16, 16, `Score: ${this.score}`, {fontSize: '32px', fill: '#000'})
+
+        this.bestScoreText = this.add.text(16, 52, `Best Score: ${this.bestScore}`, {fontSize: '16px', fill: '#000'})
+    }
+
+    increaseScore(){
+        this.score ++;
+        this.scoreText.setText(`Score: ${this.score}`);
     }
 }
 
