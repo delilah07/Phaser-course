@@ -18,9 +18,12 @@ class PlayScene extends BaseScene{
         this.scoreText = ''
         this.bestScore = localStorage.getItem('bestScore') || 0
         this.bestScoreText = ''
+
+        this.isPaused = false
     }
 
     create(){
+        this.score = 0
         super.create()
         this.createBird();
         this.createPipes();
@@ -29,6 +32,7 @@ class PlayScene extends BaseScene{
         this.handleInputs();
 
         this.createScore()
+        this.listenEvents()
     }
     update() {
         this.checkGameStatus();
@@ -57,6 +61,28 @@ class PlayScene extends BaseScene{
 
         this.pipes.setVelocityX(-200)
     }
+    listenEvents(){
+        if(this.pauseEvent) {return}
+        this.pauseEvent = this.events.on('resume', () =>{
+            let initialTime = 3
+            this.countDownText = this.add.text(...this.screenCenter, `Fly in: ${initialTime}`, this.fontOption).setOrigin(0.5, 1);
+            this.timedEvent = this.time.addEvent({
+                delay: 1000,
+                callback: () => {
+                    initialTime--;
+                    this.countDownText.setText(`Fly in: ${initialTime}`)
+                    if(initialTime === 0){
+                        this.countDownText.setText('')
+                        this.physics.resume()
+                        this.timedEvent.remove()
+                        this.isPaused = false
+                    }
+                },
+                callbackScope: this,
+                loop: true
+            })
+        })
+    }
     createPause() {
         const pauseBtn = this.add.image(this.config.width - 20, this.config.height- 20, 'pause')
             .setOrigin(1, 1)
@@ -64,8 +90,10 @@ class PlayScene extends BaseScene{
             .setInteractive();
 
         pauseBtn.on('pointerdown', () => {
+            this.isPaused = true
             this.physics.pause();
             this.scene.pause()
+            this.scene.launch('PauseScene')
         })
     }
     handleInputs() {
@@ -80,6 +108,7 @@ class PlayScene extends BaseScene{
     }
 
     flap(){
+        if (this.isPaused) return
         this.bird.body.velocity.y = -this.flapVelocity
     }
 
@@ -155,9 +184,7 @@ class PlayScene extends BaseScene{
         this.score ++;
         this.scoreText.setText(`Score: ${this.score}`);
     }
-    pause(){
 
-    }
 }
 
 export default PlayScene

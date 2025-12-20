@@ -4,7 +4,8 @@ class BaseScene extends Phaser.Scene{
     constructor(key, config){
         super(key)
         this.config = config
-        this.screenCenter = [config.width/1.25, config.height/1.1]
+        this.screenCenter = [config.width/2, config.height/2]
+        this.fontOption = {fontSize: '32px', color: '#0073ff', fontStyle: 'bold', stroke: '#fff', strokeThickness: 5 }
     }
 
     create(){
@@ -23,11 +24,12 @@ class BaseScene extends Phaser.Scene{
     }
 
     createMenu(menu, setupMenuEvents){
-        let lastMenuPosition = 0
+        let lastMenuPosition = -20
         menu.forEach(menuItem => {
             const menuPosition = [this.screenCenter[0], this.screenCenter[1] + lastMenuPosition];
+            console.log(menuItem.text, menuItem, menuPosition)
             menuItem.textObject = this.add
-                .text(...menuPosition, menuItem.text, {fontSize: '32px', fill: '#0073ff', fontStyle: 'bold', strokeThickness: '5' })
+                .text(...menuPosition, menuItem.text, this.fontOption)
                 .setOrigin(0.5, 1);
             lastMenuPosition += 42
             setupMenuEvents(menuItem)

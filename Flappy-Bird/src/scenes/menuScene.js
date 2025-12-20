@@ -20,12 +20,12 @@ class MenuScene extends BaseScene{
         textObject.setInteractive()
 
         textObject.on('pointerover', ()=> {
-            textObject.setStyle({fill: '#2400c7'})
+            textObject.setStyle({color: '#2400c7'})
         })
         textObject.on('pointerout', ()=> {
-            textObject.setStyle({fill: '#0073ff'})
+            textObject.setStyle({color: '#0073ff'})
         })
-        textObject.on('pointerup', ()=> menuItem.scene && this.scene.start(menuItem.scene))
+        textObject.on('pointerdown', ()=> menuItem.scene && this.scene.start(menuItem.scene))
     }
 }
 

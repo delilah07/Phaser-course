@@ -10,7 +10,7 @@ class ScoreScene extends BaseScene{
 
         const bestScore = localStorage.getItem('bestScore');
         this.add
-            .text(this.config.width/2, this.config.height/2, `Your Best Score: ${bestScore || 0}`, {fontSize: '32px', fill: '#0073ff', fontStyle: 'bold', strokeThickness: '5' })
+            .text(this.config.width/2, this.config.height/2, `Your Best Score: ${bestScore || 0}`, {fontSize: '32px', color: '#0073ff', fontStyle: 'bold', strokeThickness: '5' })
             .setOrigin(0.035, 0.05);
     }
 
