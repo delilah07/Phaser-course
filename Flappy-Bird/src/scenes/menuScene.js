@@ -2,11 +2,11 @@ import BaseScene from "./baseScene";
 
 class MenuScene extends BaseScene{
     constructor(config){
-        super("MenuScene", config);
+        super("MenuScene", {...config, canGoBack:false});
         this.menu = [
             {scene: 'PlayScene', text: 'Play'},
             {scene: 'ScoreScene', text: 'Score'},
-            {scene: null, text: 'Exit'},
+            {scene: 'StartScene', text: 'Exit'},
         ]
     }
 
@@ -25,12 +25,7 @@ class MenuScene extends BaseScene{
         textObject.on('pointerout', ()=> {
             textObject.setStyle({fill: '#0073ff'})
         })
-        textObject.on('pointerup', ()=> {
-            menuItem.scene && this.scene.start(menuItem.scene)
-            if(menuItem.text === 'Exit'){
-                this.game.destroy(true)
-            }
-        })
+        textObject.on('pointerup', ()=> menuItem.scene && this.scene.start(menuItem.scene))
     }
 }
 
