@@ -8,14 +8,17 @@ class StartScene extends BaseScene{
     create(){
         super.create()
 
-       const gameName = this.add
-            .text(this.config.width/2, this.config.height/2 - 20, 'Flappy Bird', this.fontOption)
-            .setOrigin(0.5, 1);
+    //    const gameName = this.add
+    //         .text(this.config.width/2, this.config.height/2 - 20, 'Flappy Bird', this.fontOption)
+    //         .setOrigin(0.5, 1);
 
-            gameName.setFontSize(54)
+    //         gameName.setFontSize(54)
+
+        this.add.image(this.config.width/2, this.config.height/2 - 50, 'logo')
+            .setScale(0.9, 0.9)
 
         const startBtn = this.add
-            .text(this.config.width/2, this.config.height/2 + 40, 'Start', this.fontOption)
+            .text(this.config.width/2, this.config.height/2 + 80, 'Start', this.fontOption)
             .setOrigin(0.5, 1).setInteractive();
 
         startBtn.on('pointerover', ()=> {
