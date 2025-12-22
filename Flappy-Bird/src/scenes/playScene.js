@@ -75,10 +75,10 @@ class PlayScene extends BaseScene{
     createBird() {
         this.bird = this.physics.add.sprite(this.config.startPosition.x, this.config.startPosition.y, 'bird')
             // .setFlipX(true)
-            .setScale(0.25)
+            // .setScale(0.8)
             .setOrigin(0);
 
-        this.bird.setBodySize(this.bird.width, this.bird.height - 70)
+        this.bird.setBodySize(this.bird.width, this.bird.height - 15)
         this.bird.body.gravity.y = 400;
         this.bird.setCollideWorldBounds(true)
     }
