@@ -59,13 +59,26 @@ class PlayScene extends BaseScene{
 
         this.createScore()
         this.listenEvents()
+
+        this.anims.create({
+            key: 'fly',
+            frames: this.anims.generateFrameNumbers('bird',{start: 0, end: 7}),
+            frameRate: 8, // 24 fps default
+            repeat: -1 //infinite repeating
+        })
+        this.bird.play('fly')
     }
     update() {
         this.checkGameStatus();
         this.recyclePipe();
     }
     createBird() {
-        this.bird = this.physics.add.sprite(this.config.startPosition.x, this.config.startPosition.y, 'bird');
+        this.bird = this.physics.add.sprite(this.config.startPosition.x, this.config.startPosition.y, 'bird')
+            // .setFlipX(true)
+            .setScale(0.25)
+            .setOrigin(0);
+
+        this.bird.setBodySize(this.bird.width, this.bird.height - 70)
         this.bird.body.gravity.y = 400;
         this.bird.setCollideWorldBounds(true)
     }
@@ -141,7 +154,29 @@ class PlayScene extends BaseScene{
     gameOver(){
 
         this.physics.pause();
-        this.bird.setTint(0xff0000)
+        this.bird.stop('fly')
+        // this.cameras.main.shake(200, 0.01);
+
+        if (!this.textures.exists('whitePixel')) {
+            const g = this.make.graphics({ x: 0, y: 0, add: false });
+            g.fillStyle(0xffffff, 1);
+            g.fillRect(0, 0, 20, 20);
+            g.generateTexture('whitePixel', 20, 20);
+            g.destroy();
+        }
+
+        const particles = this.add.particles('whitePixel');
+
+        particles.createEmitter({
+            x: this.bird.x,
+            y: this.bird.y,
+            speed: { min: 100, max: 200 },
+            lifespan: 300,
+            quantity: 10,
+            scale: { start: 1, end: 0 },
+            alpha: { start: 1, end: 0 },
+            on: false
+        }).explode(20, this.bird.x +20, this.bird.y +30 );
 
         const bestScoreValue = localStorage.getItem('bestScore')
         const bestScore = bestScoreValue && parseInt(bestScoreValue, 10)
@@ -158,7 +193,8 @@ class PlayScene extends BaseScene{
                 this.bestScore = localStorage.getItem('bestScore')
             },
             loop: false
-        })
+        });
+      
     } 
 
     placePipe(uPipe, lPipe){
@@ -204,9 +240,10 @@ class PlayScene extends BaseScene{
     }
 
     createScore(){
-        this.scoreText = this.add.text(16, 16, `Score: ${this.score}`, {fontSize: '32px', fill: '#000'})
+        this.scoreText = this.add.text(16, 16, `Score: ${this.score}`, this.fontOption)
 
-        this.bestScoreText = this.add.text(16, 52, `Best Score: ${this.bestScore}`, {fontSize: '16px', fill: '#000'})
+        const bestScoreText = this.bestScoreText = this.add.text(16, 52, `Best Score: ${this.bestScore}`, this.fontOption);
+        bestScoreText.setFontSize(16)
     }
 
     increaseScore(){

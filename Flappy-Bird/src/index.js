@@ -26,10 +26,11 @@ const initScenes = () => Scenes.map(scene => new scene(SHARED_CONFIG))
 const config = {
   type: Phaser.AUTO, // render, default WebGL (Web Graphics Library)
   ...SHARED_CONFIG,
+  pixelArt: true,
   physics: {
     default: 'arcade', // arcade phycics plugin, manages physics simulation
     arcade: {
-      debug: true
+      // debug: true
     }
   },
   scene: initScenes()
