@@ -34,9 +34,10 @@ class PauseScene extends BaseScene {
             this.scene.stop()
             this.scene.resume(menuItem.scene)
         } else {
-            this.scene.stop('PlayScene')
-            this.scene.start(menuItem.scene)
-           
+          debugger
+          this.scene.stop('PlayScene')
+          this.scene.stop();
+          this.scene.start(menuItem.scene)
         }
     })
   }

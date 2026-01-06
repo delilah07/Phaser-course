@@ -50,6 +50,7 @@ class PlayScene extends BaseScene{
     create(){
         this.currentDifficulty = 'easy'
         this.score = 0
+        this.isPaused = false
         super.create()
         this.createBird();
         this.createPipes();
@@ -102,6 +103,7 @@ class PlayScene extends BaseScene{
     }
     listenEvents(){
         if(this.pauseEvent) {return}
+        
         this.pauseEvent = this.events.on('resume', () =>{
             let initialTime = 3
             this.countDownText = this.add.text(...this.screenCenter, `Fly in: ${initialTime}`, this.fontOption).setOrigin(0.5, 1);
@@ -137,7 +139,7 @@ class PlayScene extends BaseScene{
     }
     handleInputs() {
         this.input.on('pointerdown', this.flap, this)
-        this.input.keyboard.on('keydown-SPACE', this.flap, this)
+            this.input.keyboard.on('keydown-SPACE', this.flap, this)
     }
 
     checkGameStatus() {
