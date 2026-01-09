@@ -6,6 +6,6 @@ Flappy Bird Game \
 Phaser, JavaScript \
 https://delilah07.github.io/Phaser-course/Flappy-Bird/build/
 
-Dino Game
+Dino Game \
 Phaser, TypeScript \
 https://delilah07.github.io/Phaser-course/Dino-game/build/
