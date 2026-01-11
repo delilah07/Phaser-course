@@ -17,6 +17,7 @@ class PlayScene extends Phaser.Scene{
     player: Player;
     startTrigger: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
     ground: Phaser.GameObjects.TileSprite;
+    isGameRunning: boolean = false;
 
     create(){   
         this.createEnviroment()
@@ -34,11 +35,20 @@ class PlayScene extends Phaser.Scene{
 
             this.startTrigger.body.reset(9999, 9999);
 
-            this.time.addEvent({
+            const rollOutEvent = this.time.addEvent({
                 delay: 1000 / 60,
                 loop: true,
                 callback: () => {
-                    if (this.ground.width <= this.gameWidth) this.ground.width += 17
+                    this.ground.width += 34;
+                    this.player.setVelocityX(80);
+                    this.player.playRunAnim()
+
+                    if (this.ground.width >= this.gameWidth) {
+                        rollOutEvent.remove();
+                        this.ground.width = this.gameWidth;
+                        this.player.setVelocityX(0);
+                        this.isGameRunning = true;
+                    }
                 }
             })
 
