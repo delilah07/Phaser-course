@@ -1,27 +1,25 @@
 import Phaser from "phaser";
-import { Player } from '../entities/Player'
+import { Player } from '../entities/Player';
+import { GameScene } from './GameScene'
 
-class PlayScene extends Phaser.Scene{
+class PlayScene extends GameScene{
+    player: Player;
+    startTrigger: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
+    ground: Phaser.GameObjects.TileSprite;
+
+    spawnInterwal: number = 1500;
+    spawnTime: number = 0;
+    obstaclesArr: Phaser.Physics.Arcade.Group;
+
     constructor(){
         super('PlayScene');
     }
 
-    get gameHeight(){
-        return this.game.config.height as number
-    }
-
-    get gameWidth(){
-        return this.game.config.width as number
-    }
-
-    player: Player;
-    startTrigger: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
-    ground: Phaser.GameObjects.TileSprite;
-    isGameRunning: boolean = false;
-
     create(){   
-        this.createEnviroment()
+        this.createEnviroment();
         this.createPlayer();
+
+        this.obstaclesArr = this.physics.add.group();
 
         this.startTrigger = this.physics.add.sprite(0, 10, null).setAlpha(0).setOrigin(0, 1);
 
@@ -55,6 +53,15 @@ class PlayScene extends Phaser.Scene{
         })
     }
 
+    update(time: number, delta: number){
+        this.spawnTime += delta;
+
+        if (this.spawnTime >= this.spawnInterwal){
+            this.spawnObstacles();
+            this.spawnTime = 0;
+        }
+    }
+
     createEnviroment(){
         this.ground = this.add.tileSprite(0, this.gameHeight, 88, 26, 'ground').setOrigin(0, 1);
     }
@@ -63,9 +70,12 @@ class PlayScene extends Phaser.Scene{
         this.player = new Player(this, 0, this.gameHeight);
     }
 
-    // update(){
-    //    if (this.shouldStartRoll) this.ground.width += 4
-    // }
+    spawnObstacles(){
+        const obstacleNum = Math.ceil(Math.random() * 6);
+        const distance = Phaser.Math.Between(600, 900);
+        this.obstaclesArr.create(distance, this.gameHeight, `obstacle-${obstacleNum}-img`).setOrigin(0, 1);
+    }
+
 }
 
 export default PlayScene;
