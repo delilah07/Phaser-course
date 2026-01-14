@@ -8,7 +8,9 @@ class PreloadScene extends Phaser.Scene{
 
     preload(){
         this.load.image('ground', './assets/ground.png');
+
         this.load.image('dino-idle', './assets/dino-idle-2.png');
+        this.load.image('dino-hurt-image', './assets/dino-hurt.png');
         this.load.spritesheet('dino-run-sprite','./assets/dino-run.png', {
             frameWidth: 88,
             frameHeight: 94
@@ -18,6 +20,9 @@ class PreloadScene extends Phaser.Scene{
             const cactusNum = i + 1;
             this.load.image(`obstacle-${cactusNum}-img`, `./assets/cactuses_${cactusNum}.png`);
         }
+
+        this.load.image('restart-image', './assets/restart.png');
+        this.load.image('game-over-image', './assets/game-over.png');
     }
 
     create(){
