@@ -7,6 +7,7 @@ class PlayScene extends GameScene{
     player: Player;
     startTrigger: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
     ground: Phaser.GameObjects.TileSprite;
+    clouds: Phaser.GameObjects.Group;
 
     spawnInterwal: number = 1500;
     spawnTime: number = 0;
@@ -32,6 +33,7 @@ class PlayScene extends GameScene{
         this.handleObstacleCoallisions();
         this.handleGameRestart();
 
+        this.createAnimations();
     }
 
     update(time: number, delta: number){
@@ -46,16 +48,29 @@ class PlayScene extends GameScene{
         }
 
         Phaser.Actions.IncX(this.obstaclesArr.getChildren(), -this.gameSpeed);
+        Phaser.Actions.IncX(this.clouds.getChildren(), -0.5);
 
         this.obstaclesArr.getChildren().forEach((obstacle: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody) => {
             if (obstacle.getBounds().right < 0) this.obstaclesArr.remove(obstacle)
         });
+
+        this.clouds.getChildren().forEach((cloud: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody) => {
+             if (cloud.getBounds().right < 0) cloud.x = this.gameWidth + 30;
+        })
 
         this.ground.tilePositionX += this.gameSpeed;
     }
 
     createEnviroment(){
         this.ground = this.add.tileSprite(0, this.gameHeight, 88, 26, 'ground').setOrigin(0, 1);
+
+        this.clouds = this.add.group();
+        this.clouds = this.clouds.addMultiple([
+            this.add.image(this.gameWidth / 2, 170, 'cloud'),
+            this.add.image(this.gameWidth - 80, 80, 'cloud'),
+            this.add.image(this.gameWidth / 1.3, 100, 'cloud'),
+        ]);
+        this.clouds.setAlpha(0);
     }
 
     createPlayer(){
@@ -63,15 +78,32 @@ class PlayScene extends GameScene{
     }
 
     spawnObstacles(){
-        const obstacleNum = Math.ceil(Math.random() * PRELOAD_CONFIG.cactusesCount);
-        const distance = Phaser.Math.Between(600, 900);
-        const obctacle =  this.obstaclesArr.create(distance, this.gameHeight, `obstacle-${obstacleNum}-img`).setOrigin(0, 1);
-        obctacle.setImmovable()
+        const obstaclesCount = PRELOAD_CONFIG.cactusesCount + PRELOAD_CONFIG.birdsCount
+        const obstacleNum = Math.ceil(Math.random() * obstaclesCount);
+        const distance = Phaser.Math.Between(150, 300);
+
+        if(obstacleNum <= 6){
+            const obctacle = this.obstaclesArr.create(this.gameWidth + distance, this.gameHeight, `obstacle-${obstacleNum}-img`).setOrigin(0, 1);
+            obctacle.setImmovable()
+        } else {
+            const enemyPossibleHeight = [20, 70];
+            const enemyHeight = enemyPossibleHeight[Math.floor(Math.random() * enemyPossibleHeight.length)]
+            const obstacle = this.obstaclesArr.create(this.gameWidth + distance, this.gameHeight - enemyHeight, `enemy-bird-sprite`).setOrigin(0, 1).setImmovable();
+            obstacle.play('enemy-bird-anim', true)
+        }
+    }
+
+    createAnimations(){
+        this.anims.create({
+            key: 'enemy-bird-anim',
+            frames: this.anims.generateFrameNumbers('enemy-bird-sprite'),
+            frameRate: 6,
+            repeat: -1
+        })
     }
 
     createObstacles(){
         this.obstaclesArr = this.physics.add.group();
-        
     };
 
     createGameOverContainer(){
@@ -110,11 +142,14 @@ class PlayScene extends GameScene{
                         rollOutEvent.remove();
                         this.ground.width = this.gameWidth;
                         this.player.setVelocityX(0);
+                        this.clouds.setAlpha(1);
                         this.isGameRunning = true;
                     }
                 }
             });
         });
+
+        
     };
 
     handleObstacleCoallisions(){
@@ -122,6 +157,8 @@ class PlayScene extends GameScene{
             this.isGameRunning = false;
             this.physics.pause();
             this.player.die();
+
+            this.anims.pauseAll()
 
             this.gameOverContaine.setAlpha(1)
         });
@@ -139,6 +176,7 @@ class PlayScene extends GameScene{
 
         })
     };
+
 
 }
 
