@@ -1,4 +1,5 @@
 import Phaser from "phaser";
+import { PRELOAD_CONFIG } from '..'
 
 class PreloadScene extends Phaser.Scene{
     constructor(){
@@ -13,12 +14,10 @@ class PreloadScene extends Phaser.Scene{
             frameHeight: 94
         });
 
-        this.load.image('obstacle-1-img', './assets/cactuses_1.png');
-        this.load.image('obstacle-2-img', './assets/cactuses_2.png');
-        this.load.image('obstacle-3-img', './assets/cactuses_3.png');
-        this.load.image('obstacle-4-img', './assets/cactuses_4.png');
-        this.load.image('obstacle-5-img', './assets/cactuses_5.png');
-        this.load.image('obstacle-6-img', './assets/cactuses_6.png');
+        for (let i = 0; i < PRELOAD_CONFIG.cactusesCount; i++) {
+            const cactusNum = i + 1;
+            this.load.image(`obstacle-${cactusNum}-img`, `./assets/cactuses_${cactusNum}.png`);
+        }
     }
 
     create(){
