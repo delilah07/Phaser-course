@@ -14,6 +14,7 @@ class PlayScene extends GameScene{
     obstaclesArr: Phaser.Physics.Arcade.Group;
 
     gameSpeed: number = 8;
+    gameSpeedModifier: number = 0;
 
     gameOverContaine: Phaser.GameObjects.Container;
     gameOverText: Phaser.GameObjects.Image;
@@ -23,6 +24,8 @@ class PlayScene extends GameScene{
     score: number = 0;
     scoreInterval: number = 100;
     scoreDeltaTime: number = 0;
+
+    highScoreText: Phaser.GameObjects.Text;
 
     constructor(){
         super('PlayScene');
@@ -41,6 +44,7 @@ class PlayScene extends GameScene{
         this.createAnimations();
 
         this.createScore();
+        this.createHighScore();
 
     }
 
@@ -57,9 +61,12 @@ class PlayScene extends GameScene{
         if (this.scoreDeltaTime >= this.scoreInterval) {
             this.score++;
             this.scoreDeltaTime = 0;
+
+            if (this.score % 100 === 0) this.gameSpeed += 0.1;
+            console.log(this.gameSpeed)
         }
 
-        Phaser.Actions.IncX(this.obstaclesArr.getChildren(), -this.gameSpeed);
+        Phaser.Actions.IncX(this.obstaclesArr.getChildren(), -this.gameSpeed + this.gameSpeedModifier);
         Phaser.Actions.IncX(this.clouds.getChildren(), -0.5);
 
         const score = Array.from(String(this.score), Number);
@@ -76,7 +83,7 @@ class PlayScene extends GameScene{
              if (cloud.getBounds().right < 0) cloud.x = this.gameWidth + 30;
         })
 
-        this.ground.tilePositionX += this.gameSpeed;
+        this.ground.tilePositionX += this.gameSpeed + this.gameSpeedModifier;
     }
 
     createEnviroment(){
@@ -101,12 +108,15 @@ class PlayScene extends GameScene{
         const distance = Phaser.Math.Between(150, 300);
 
         if(obstacleNum <= 6){
-            const obctacle = this.obstaclesArr.create(this.gameWidth + distance, this.gameHeight, `obstacle-${obstacleNum}-img`).setOrigin(0, 1);
-            obctacle.setImmovable()
+            const obstacle = this.obstaclesArr.create(this.gameWidth + distance, this.gameHeight, `obstacle-${obstacleNum}-img`).setOrigin(0, 1);
+            obstacle.setImmovable().setBodySize(obstacle.width - 6, obstacle.height - 10);
         } else {
             const enemyPossibleHeight = [20, 70];
             const enemyHeight = enemyPossibleHeight[Math.floor(Math.random() * enemyPossibleHeight.length)]
-            const obstacle = this.obstaclesArr.create(this.gameWidth + distance, this.gameHeight - enemyHeight, `enemy-bird-sprite`).setOrigin(0, 1).setImmovable();
+            const obstacle = this.obstaclesArr.create(this.gameWidth + distance, this.gameHeight - enemyHeight, `enemy-bird-sprite`)
+                .setOrigin(0, 1)
+                .setImmovable();
+            obstacle.setBodySize(obstacle.width - 10, obstacle.height - 20);
             obstacle.play('enemy-bird-anim', true)
         }
     }
@@ -163,6 +173,7 @@ class PlayScene extends GameScene{
                         this.clouds.setAlpha(1);
                         this.isGameRunning = true;
                         this.scoreText.setAlpha(1)
+
                     }
                 }
             });
@@ -181,11 +192,15 @@ class PlayScene extends GameScene{
 
             this.gameOverContaine.setAlpha(1);
 
+            this.score = 0;
             this.spawnTime = 0;
-            this.gameSpeed = 5;
-
-            // this.score = 0;
+            this.gameSpeed = 8;
             this.scoreDeltaTime = 0;
+
+            const newHighScore = this.highScoreText.text.substring(this.highScoreText.text.length - 5);
+            const newScore = Number(this.scoreText.text) > Number(newHighScore) ? this.scoreText.text : newHighScore;
+            this.highScoreText.setText('HI:' + newScore);
+            this.highScoreText.setAlpha(1)
         });
     };
 
@@ -196,6 +211,7 @@ class PlayScene extends GameScene{
             this.obstaclesArr.clear(true, true);
             this.gameOverContaine.setAlpha(0);
             this.anims.resumeAll();
+          
 
             this.isGameRunning = true;
 
@@ -204,6 +220,17 @@ class PlayScene extends GameScene{
 
     createScore(){
         this.scoreText = this.add.text(this.gameWidth, 0, '00000', {
+            fontSize: 30,
+            fontFamily: 'Ariel',
+            color: '#535353',
+            fontStyle: 'bold',
+            resolution: 10
+        }).setOrigin(1, 0)
+            .setAlpha(0);
+    }
+
+    createHighScore(){
+        this.highScoreText = this.add.text(this.gameWidth - this.scoreText.width - 20, 0, '00000', {
             fontSize: 30,
             fontFamily: 'Ariel',
             color: '#535353',
