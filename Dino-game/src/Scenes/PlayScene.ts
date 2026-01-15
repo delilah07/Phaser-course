@@ -15,9 +15,14 @@ class PlayScene extends GameScene{
 
     gameSpeed: number = 8;
 
-    gameOverContaine: Phaser.GameObjects.Container
-    gameOverText: Phaser.GameObjects.Image
-    restartText: Phaser.GameObjects.Image
+    gameOverContaine: Phaser.GameObjects.Container;
+    gameOverText: Phaser.GameObjects.Image;
+    restartText: Phaser.GameObjects.Image;
+
+    scoreText: Phaser.GameObjects.Text;
+    score: number = 0;
+    scoreInterval: number = 100;
+    scoreDeltaTime: number = 0;
 
     constructor(){
         super('PlayScene');
@@ -34,21 +39,34 @@ class PlayScene extends GameScene{
         this.handleGameRestart();
 
         this.createAnimations();
+
+        this.createScore();
+
     }
 
     update(time: number, delta: number){
         if(!this.isGameRunning) return;
 
-
         this.spawnTime += delta;
+        this.scoreDeltaTime += delta
 
         if (this.spawnTime >= this.spawnInterwal){
             this.spawnObstacles();
             this.spawnTime = 0;
         }
+        if (this.scoreDeltaTime >= this.scoreInterval) {
+            this.score++;
+            this.scoreDeltaTime = 0;
+        }
 
         Phaser.Actions.IncX(this.obstaclesArr.getChildren(), -this.gameSpeed);
         Phaser.Actions.IncX(this.clouds.getChildren(), -0.5);
+
+        const score = Array.from(String(this.score), Number);
+        for (let i = 0; i < 5 - String(this.score).length; i++) {
+            score.unshift(0)
+        }
+        this.scoreText.setText(score.join(''));
 
         this.obstaclesArr.getChildren().forEach((obstacle: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody) => {
             if (obstacle.getBounds().right < 0) this.obstaclesArr.remove(obstacle)
@@ -144,6 +162,7 @@ class PlayScene extends GameScene{
                         this.player.setVelocityX(0);
                         this.clouds.setAlpha(1);
                         this.isGameRunning = true;
+                        this.scoreText.setAlpha(1)
                     }
                 }
             });
@@ -160,7 +179,13 @@ class PlayScene extends GameScene{
 
             this.anims.pauseAll()
 
-            this.gameOverContaine.setAlpha(1)
+            this.gameOverContaine.setAlpha(1);
+
+            this.spawnTime = 0;
+            this.gameSpeed = 5;
+
+            // this.score = 0;
+            this.scoreDeltaTime = 0;
         });
     };
 
@@ -177,7 +202,16 @@ class PlayScene extends GameScene{
         })
     };
 
-
+    createScore(){
+        this.scoreText = this.add.text(this.gameWidth, 0, '00000', {
+            fontSize: 30,
+            fontFamily: 'Ariel',
+            color: '#535353',
+            fontStyle: 'bold',
+            resolution: 10
+        }).setOrigin(1, 0)
+            .setAlpha(0);
+    }
 }
 
 export default PlayScene;
