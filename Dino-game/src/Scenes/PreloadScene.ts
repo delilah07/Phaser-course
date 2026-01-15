@@ -33,6 +33,10 @@ class PreloadScene extends Phaser.Scene{
 
         this.load.image('restart-image', './assets/restart.png');
         this.load.image('game-over-image', './assets/game-over.png');
+
+        this.load.audio('jump-sound', './assets/jump.m4a');
+        this.load.audio('hit-sound', './assets/hit.m4a');
+        this.load.audio('progress-sound', './assets/reach.m4a');
     }
 
     create(){

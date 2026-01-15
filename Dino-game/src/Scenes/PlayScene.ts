@@ -27,6 +27,8 @@ class PlayScene extends GameScene{
 
     highScoreText: Phaser.GameObjects.Text;
 
+    progressSound: Phaser.Sound.HTML5AudioSound
+
     constructor(){
         super('PlayScene');
     }
@@ -46,6 +48,7 @@ class PlayScene extends GameScene{
         this.createScore();
         this.createHighScore();
 
+        this.progressSound = this.sound.add('progress-sound', {volume: 0.2}) as Phaser.Sound.HTML5AudioSound;
     }
 
     update(time: number, delta: number){
@@ -62,8 +65,17 @@ class PlayScene extends GameScene{
             this.score++;
             this.scoreDeltaTime = 0;
 
-            if (this.score % 100 === 0) this.gameSpeed += 0.1;
-            console.log(this.gameSpeed)
+            if (this.score % 100 === 0) {
+                this.gameSpeed += 0.1;
+                this.tweens.add({
+                    targets: this.scoreText,
+                    duration: 100,
+                    repeat: 3,
+                    alpha: 0,
+                    yoyo: true
+                });
+                this.progressSound.play();
+            }
         }
 
         Phaser.Actions.IncX(this.obstaclesArr.getChildren(), -this.gameSpeed + this.gameSpeedModifier);

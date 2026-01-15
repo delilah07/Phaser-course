@@ -11,6 +11,8 @@
       body {
         padding: 100px;
         display: flex;
+        flex-direction: column-reverse;
+
         align-items: center;
         justify-content: center;
         min-height: 100vh;
@@ -18,8 +20,20 @@
       canvas{
         border: 2px solid black;
       }
+      .text-wrapper{
+        margin: 10px;
+        text-align: center;
+      }
+      .text-wrapper p + p{
+        margin-top: 10px;
+      }
     </style>
   </head>
   <body>
+
+    <div class="text-wrapper">
+      <p>Press "Space" to start the game and to jump</p>
+      <p>Press "Down" to get dino down</p>
+    </div>
   </body>
 </html>
