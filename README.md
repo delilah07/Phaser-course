@@ -9,3 +9,7 @@ https://delilah07.github.io/Phaser-course/Flappy-Bird/build/
 Dino Game \
 Phaser, TypeScript \
 https://delilah07.github.io/Phaser-course/Dino-game/build/
+
+Platformer Game \
+Phasert \
+https://delilah07.github.io/Phaser-course/Platformer-game/build/
