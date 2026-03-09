@@ -1,6 +1,6 @@
 
 node_modules
-build
+# build
 # Mac Files
 .DS_Store
 
@@ -80,4 +80,4 @@ tmp/
 temp/
 
 dist/
-build/
+# build/

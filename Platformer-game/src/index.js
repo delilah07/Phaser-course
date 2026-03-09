@@ -23,7 +23,7 @@ const config = {
   physics: {
     default: 'arcade', // arcade phycics plugin, manages physics simulation
     arcade: {
-      // debug: true
+      debug: true
     }
   },
   scene: initScenes()
