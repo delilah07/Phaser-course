@@ -18,7 +18,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
   }
 
   init() {
-    this.gravity = 500;
+    this.gravity = 400;
     this.playerSpeed = 140;
     this.jumpCount = 0;
     this.maxJumps = 1;
@@ -26,6 +26,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
 
     this.body.setGravityY(this.gravity);
     this.setCollideWorldBounds(true);
+    this.setOrigin(0.5, 1);
 
     initAnimation(this.scene.anims);
   }

@@ -1,20 +1,23 @@
+import Phaser from 'phaser';
 
+import PreloadScene from './scenes/Preload';
+import PlayScene from './scenes/Play';
 
-import Phaser from "phaser";
+const MAP_WIDTH = 1600;
 
-import PreloadScene from "./scenes/Preload";
-import PlayScene from "./scenes/Play";
-
-const WIDTH = 1280
-const HEIGHT = 600
+const WIDTH = document.body.offsetWidth;
+const HEIGHT = 600;
 
 const SHARED_CONFIG = {
+  mapOffset: MAP_WIDTH > WIDTH ? MAP_WIDTH - WIDTH : 0,
   width: WIDTH,
-  height: HEIGHT
-}
+  height: HEIGHT,
+  zoomFactor: 1.5,
+  endSize: 300,
+};
 
-const Scenes = [PreloadScene, PlayScene]
-const initScenes = () => Scenes.map(scene => new scene(SHARED_CONFIG))
+const Scenes = [PreloadScene, PlayScene];
+const initScenes = () => Scenes.map((scene) => new scene(SHARED_CONFIG));
 
 const config = {
   type: Phaser.AUTO, // render, default WebGL (Web Graphics Library)
@@ -23,11 +26,10 @@ const config = {
   physics: {
     default: 'arcade', // arcade phycics plugin, manages physics simulation
     arcade: {
-      debug: true
-    }
+      debug: true,
+    },
   },
-  scene: initScenes()
+  scene: initScenes(),
 };
 
 new Phaser.Game(config);
-
