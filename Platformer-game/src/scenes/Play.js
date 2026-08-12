@@ -1,6 +1,8 @@
 import Phaser from 'phaser';
 import Player from '../entities/Player';
 
+import Enemies from '../groups/Enemies';
+
 class Play extends Phaser.Scene {
   constructor(config) {
     super('PlayScene');
@@ -17,6 +19,15 @@ class Play extends Phaser.Scene {
     this.createPlayerColliders(player, {
       colliders: {
         platformsColliders: layers.platformsColliders,
+      },
+    });
+
+    const enemies = this.createEnemies(layers.enemySpawns);
+
+    this.createEnemyColliders(enemies, {
+      colliders: {
+        platformsColliders: layers.platformsColliders,
+        player,
       },
     });
 
@@ -47,9 +58,17 @@ class Play extends Phaser.Scene {
 
     const playerZones = map.getObjectLayer('player_zones');
 
+    const enemySpawns = map.getObjectLayer('enemy_spawns');
+
     platformsColliders.setCollisionByProperty({ collides: true });
 
-    return { environment, platforms, platformsColliders, playerZones };
+    return {
+      environment,
+      platforms,
+      platformsColliders,
+      playerZones,
+      enemySpawns,
+    };
   }
 
   createPlayer(start) {
@@ -58,6 +77,28 @@ class Play extends Phaser.Scene {
 
   createPlayerColliders(player, { colliders }) {
     player.addCollider(colliders.platformsColliders);
+  }
+
+  createEnemies(spawnLayer) {
+    const enemies = new Enemies(this);
+    const enemyTypes = enemies.getTypes();
+
+    spawnLayer.objects.forEach((spawnPoint) => {
+      const enemy = new enemyTypes[spawnPoint.type](
+        this,
+        spawnPoint.x,
+        spawnPoint.y,
+      );
+      enemies.add(enemy);
+    });
+
+    return enemies;
+  }
+
+  createEnemyColliders(enemies, { colliders }) {
+    enemies
+      .addCollider(colliders.platformsColliders)
+      .addCollider(colliders.player);
   }
 
   setupFollowupCameraOn(player) {

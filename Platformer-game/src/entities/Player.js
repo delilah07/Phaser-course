@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import initAnimation from './PlayerAnims';
+import initAnimation from './anims/PlayerAnims';
 
 import collidable from '../mixins/collidable';
 
@@ -24,6 +24,8 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     this.maxJumps = 1;
     this.cursors = this.scene.input.keyboard.createCursorKeys();
 
+    this.body.setSize(this.width - 14, this.height - 5);
+    this.setOffset(7, 5);
     this.body.setGravityY(this.gravity);
     this.setCollideWorldBounds(true);
     this.setOrigin(0.5, 1);
