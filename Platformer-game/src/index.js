@@ -14,6 +14,7 @@ const SHARED_CONFIG = {
   height: HEIGHT,
   zoomFactor: 1.5,
   endSize: 300,
+  debug: false,
 };
 
 const Scenes = [PreloadScene, PlayScene];
@@ -26,7 +27,7 @@ const config = {
   physics: {
     default: 'arcade', // arcade phycics plugin, manages physics simulation
     arcade: {
-      debug: true,
+      debug: SHARED_CONFIG.debug,
     },
   },
   scene: initScenes(),
