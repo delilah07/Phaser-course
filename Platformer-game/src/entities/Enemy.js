@@ -24,6 +24,9 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
     this.timeFromLastTurn = 0;
     this.maxPatrolDistance = 250;
     this.currentPatrolDistance = 0;
+
+    this.damage = 20;
+
     this.platformCollidersLayer = null;
     this.rayGraphics = this.scene.add.graphics({
       linestyle: { width: 2, color: 0xaa00aa },
